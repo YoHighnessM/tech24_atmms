@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../conn.php';
 
 $banks = $conn->query("SELECT id, name FROM banks");
@@ -67,9 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Registration</title>
 </head>
 
@@ -77,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2>Register Machine</h2>
 
     <form method="POST">
+
         <div>
             <label>Terminal Number:</label>
             <input type="text" name="terminal_number">
@@ -151,8 +153,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div>
             <label>Per Diem:</label>
-            <label><input type="radio" name="per_diem" value="Yes" required> Yes</label>
-            <label><input type="radio" name="per_diem" value="No" required> No</label>
+            <label>
+                <input type="radio" name="per_diem" value="Yes" required> Yes
+            </label>
+            <label>
+                <input type="radio" name="per_diem" value="No" required> No
+            </label>
         </div>
 
         <div>
@@ -180,7 +186,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </select>
         </div>
 
-        <button type="submit">Register</button>
+        <div>
+            <button type="submit">Register</button>
+            <button type="button" onclick="window.location.href='machine_list.php'">Cancel</button>
+        </div>
+
     </form>
 </body>
 
