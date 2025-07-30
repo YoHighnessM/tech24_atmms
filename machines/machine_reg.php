@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'branch',
         'form_type',
         'type',
-        'atm_name',
         'district',
         'per_diem',
+        'technician',
         'status'
     ];
     $errors = [];
@@ -25,18 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (count($errors) === 0) {
-        $terminal_number = $_POST['terminal_number'];
+        $terminal_number = !empty($_POST['terminal_number']) ? $_POST['terminal_number'] : '-';
         $bank_id = $_POST['bank'];
-        $branch = $_POST['branch'];
+        $branch = ucwords($_POST['branch']);
         $form_type = $_POST['form_type'];
         $type = $_POST['type'];
-        $context = $_POST['context'];
-        $atm_name = $_POST['atm_name'];
+        $context = ucwords($_POST['context']);
+        $atm_name = !empty($_POST['atm_name']) ? $_POST['atm_name'] : '-';
         $district_id = $_POST['district'];
-        $serial_number = $_POST['serial_number'];
+        $serial_number = !empty($_POST['serial_number']) ? $_POST['serial_number'] : '-';
         $per_diem = $_POST['per_diem'];
-        $technician_id = $_POST['technician'];
-        $coordinates = $_POST['coordinates'];
+        $technician_id = !empty($_POST['technician']) ? $_POST['technician'] : '-';
+        $coordinates = !empty($_POST['coordinates']) ? $_POST['coordinates'] : '-';
         $status = $_POST['status'];
 
         $query = "INSERT INTO machines (
@@ -53,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             echo "Machine registered successfully.";
+            header("Location: machine_reg.php");
+            exit();
         } else {
             echo "Error: " . $conn->error;
         }
@@ -123,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div>
             <label>ATM Name:</label>
-            <select name="atm_name" required>
+            <select name="atm_name">
                 <option value="" disabled selected>Select ATM Name</option>
                 <option value="ATM - 1">ATM - 1</option>
                 <option value="ATM - 2">ATM - 2</option>
