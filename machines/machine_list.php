@@ -16,6 +16,10 @@ $select_machines = $conn->query("
     LEFT JOIN 
         users u ON m.technician_id = u.id
 ");
+
+$districts = "SELECT * FROM districts";
+$result = $conn->query($districts);
+
 ?>
 
 <!DOCTYPE html>
@@ -35,12 +39,7 @@ $select_machines = $conn->query("
             padding: 0;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
-        body {
             background: #f8fafc;
-            height: 100vh;
-            width: 100vw;
         }
 
         .card {
@@ -56,6 +55,93 @@ $select_machines = $conn->query("
             flex-direction: column;
             height: 100%;
             padding: 0;
+        }
+
+        .card-title,
+        .text-center {
+            color: #343a40;
+        }
+
+        .h4.text-center.mb-4.text-muted {
+            font-weight: 400;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-text-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-text-left h1 {
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .header-text-left h5 {
+            margin-top: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .search-bar {
+            width: 300px;
+        }
+
+        .search-bar .form-control {
+            border-radius: 0.25rem;
+        }
+
+        .search-bar .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .header-container .d-flex {
+            margin-bottom: 0 !important;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-outline-secondary {
+            border-color: #dee2e6;
+            color: #6c757d;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #e2e6ea;
+            border-color: #dae0e5;
+            color: #343a40;
+        }
+
+        .btn-counts {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .btn-counts:hover {
+            background-color: #0056b3;
+            border-color: #004a9e;
         }
 
         .table-responsive {
@@ -80,19 +166,16 @@ $select_machines = $conn->query("
             vertical-align: middle;
             font-size: 0.9rem;
             padding: 0.65rem;
-            /* slightly taller */
             border-bottom: 2px solid #dee2e6;
         }
 
         th,
         td {
             padding: 0.65rem;
-            /* slightly taller rows */
             font-size: 0.85rem;
             vertical-align: middle;
             color: #333;
             min-height: 43px;
-            /* taller min height */
         }
 
         th:not(.actions-col),
@@ -173,54 +256,43 @@ $select_machines = $conn->query("
             background-color: #e9f0ff !important;
             transition: background-color 0.3s;
         }
-
-        .card-title,
-        .text-center {
-            color: #343a40;
-        }
-
-        .btn {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .btn-outline-secondary {
-            border-color: #dee2e6;
-            color: #6c757d;
-            background-color: #f8f9fa;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #e2e6ea;
-            border-color: #dae0e5;
-            color: #343a40;
-        }
-
-        .btn-counts {
-            background-color: #6c757d;
-            color: #fff;
-            border-color: #6c757d;
-        }
-
-        .btn-counts:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-        }
     </style>
 </head>
 
 <body>
     <div class="card">
         <div class="card-body">
-            <h1 class="card-title text-center mb-3">Machines Management</h1>
-            <h4 class="text-center mb-4 text-muted">Machines List</h4>
-
-            <div class="d-flex justify-content-end mb-3">
-                <a href="add_machine.php" class="btn btn-outline-secondary me-2">Add Machine</a>
-                <a href="banks.php" class="btn btn-outline-secondary me-2">Banks</a>
-                <a href="districts.php" class="btn btn-outline-secondary me-2">Districts</a>
-                <a href="technicians.php" class="btn btn-outline-secondary me-2">Technicians</a>
-                <a href="counts.php" class="btn btn-counts">Counts</a>
+            <div class="header-container">
+                <div class="header-text-left">
+                    <h1 class="card-title">Machines Management</h1>
+                    <h5 class="text-muted">
+                        Machines List for
+                        <?php
+                        $district_names = [];
+                        if ($result->num_rows > 0) {
+                            while ($district = $result->fetch_assoc()) {
+                                $district_names[] = $district['name'];
+                            }
+                            echo implode(', ', $district_names);
+                            $result->data_seek(0);
+                        }
+                        ?>
+                    </h5>
+                </div>
+                <div class="header-actions">
+                    <form class="search-bar" onsubmit="event.preventDefault();">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
+                        </div>
+                    </form>
+                    <div class="d-flex justify-content-end">
+                        <a href="add_machine.php" class="btn btn-outline-secondary me-2">Add Machine</a>
+                        <a href="banks.php" class="btn btn-outline-secondary me-2">Banks</a>
+                        <a href="districts.php" class="btn btn-outline-secondary me-2">Districts</a>
+                        <a href="technicians.php" class="btn btn-outline-secondary me-2">Technicians</a>
+                        <a href="counts.php" class="btn btn-counts">Counts</a>
+                    </div>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -278,6 +350,34 @@ $select_machines = $conn->query("
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Add this CSS to hide filtered rows
+        const style = document.createElement('style');
+        style.innerHTML = `.hidden-row { display: none !important; }`;
+        document.head.appendChild(style);
+
+        function filterTable() {
+            const input = document.querySelector('.search-bar input[name="search_query"]');
+            const filter = input.value.toLowerCase();
+            const table = document.querySelector('.table-responsive table');
+            const tr = table.querySelectorAll('tbody tr');
+
+            tr.forEach(row => {
+                let rowVisible = false;
+                row.querySelectorAll('td:not(.actions-col)').forEach(cell => {
+                    if (cell.textContent.toLowerCase().includes(filter)) {
+                        rowVisible = true;
+                    }
+                });
+                if (rowVisible || filter === '') {
+                    row.classList.remove('hidden-row');
+                } else {
+                    row.classList.add('hidden-row');
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
