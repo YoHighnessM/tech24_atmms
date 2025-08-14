@@ -31,6 +31,11 @@ $result = $conn->query($districts);
     <title>Machines List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
         html,
         body {
@@ -38,8 +43,21 @@ $result = $conn->query($districts);
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #f8fafc;
+        }
+
+        /* Set headers, buttons, and other UI elements to Inter */
+        .card-title,
+        .text-muted,
+        .btn,
+        .search-bar .form-control {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Set table body and header to Open Sans */
+        .table {
+            font-family: 'Open Sans', sans-serif;
         }
 
         .card {
@@ -256,6 +274,10 @@ $result = $conn->query($districts);
             background-color: #e9f0ff !important;
             transition: background-color 0.3s;
         }
+
+        .hidden-row {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -264,7 +286,9 @@ $result = $conn->query($districts);
         <div class="card-body">
             <div class="header-container">
                 <div class="header-text-left">
-                    <h1 class="card-title">Machines Management</h1>
+                    <h1 class="card-title">
+                        <a href="machine_list.php" class="text-dark">Machines Management</a>
+                    </h1>
                     <h5 class="text-muted">
                         Machines List for
                         <?php
@@ -286,7 +310,7 @@ $result = $conn->query($districts);
                         </div>
                     </form>
                     <div class="d-flex justify-content-end">
-                        <a href="add_machine.php" class="btn btn-outline-secondary me-2">Add Machine</a>
+                        <a href="machine_reg.php" class="btn btn-outline-secondary me-2">Add Machine</a>
                         <a href="banks.php" class="btn btn-outline-secondary me-2">Banks</a>
                         <a href="districts.php" class="btn btn-outline-secondary me-2">Districts</a>
                         <a href="technicians.php" class="btn btn-outline-secondary me-2">Technicians</a>
@@ -352,11 +376,6 @@ $result = $conn->query($districts);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Add this CSS to hide filtered rows
-        const style = document.createElement('style');
-        style.innerHTML = `.hidden-row { display: none !important; }`;
-        document.head.appendChild(style);
-
         function filterTable() {
             const input = document.querySelector('.search-bar input[name="search_query"]');
             const filter = input.value.toLowerCase();
