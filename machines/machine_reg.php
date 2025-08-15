@@ -89,11 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 100vh;
             margin: 0;
             padding: 0;
-            overflow: hidden;
             background: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
         }
 
         .card {
@@ -104,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-width: 800px;
             padding: 2rem;
             background-color: #fff;
+            margin: 2rem 0;
         }
 
         h2,
@@ -118,10 +120,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-family: 'Open Sans', sans-serif;
         }
 
-        h2 {
-            font-weight: 600;
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 1rem;
+        }
+
+        .card-title {
             color: #343a40;
+            font-weight: 600;
         }
 
         .form-group {
@@ -133,10 +143,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 0.25rem;
         }
 
+        .btn {
+            font-weight: 500;
+        }
+
         .btn-primary {
             background-color: #007bff;
             border-color: #007bff;
-            font-weight: 500;
         }
 
         .btn-primary:hover {
@@ -144,13 +157,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-color: #004a9e;
         }
 
-        .btn-outline-secondary {
+        .btn-back {
+            background-color: #f8f9fa;
             border-color: #dee2e6;
             color: #6c757d;
-            background-color: #f8f9fa;
+            font-weight: 500;
         }
 
-        .btn-outline-secondary:hover {
+        .btn-back:hover {
             background-color: #e2e6ea;
             border-color: #dae0e5;
             color: #343a40;
@@ -165,12 +179,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #007bff;
             border-color: #007bff;
         }
+
+        .form-section-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 1.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-section {
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
     </style>
 </head>
 
 <body>
     <div class="card">
-        <h2 class="text-center">Register New Machine</h2>
+        <div class="header-container">
+            <h1 class="card-title">Register New Machine</h1>
+            <a href="machine_list.php" class="btn btn-back"><i class="bi bi-arrow-left-circle-fill me-2"></i>Cancel</a>
+        </div>
         <form method="POST">
             <div class="row">
                 <div class="col-12 form-group">
@@ -251,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="row">
-                <div class="col-auto form-group">
+                <div class="col-md-4 form-group">
                     <label class="form-label">Per Diem: <span class="text-danger">*</span></label>
                     <div class="d-flex radio-group mt-2">
                         <div class="form-check me-4">
@@ -264,13 +294,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                 </div>
-                <div class="col form-group">
+                <div class="col-md-4 form-group">
                     <label for="technician" class="form-label">Technician: <span class="text-danger">*</span></label>
                     <select class="form-select" id="technician" name="technician" required>
                         <option value="" disabled selected>Select Technician</option>
                         <?php while ($t = $technicians->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>"><?= $t['fullname'] ?></option>
                         <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="status" class="form-label">Status: <span class="text-danger">*</span></label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="" disabled selected>Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Relocated">Relocated</option>
                     </select>
                 </div>
             </div>
@@ -282,23 +321,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <!-- Updated Status Row -->
-            <div class="row align-items-center mt-4">
-                <div class="col form-group">
-                    <label for="status" class="form-label">Status: <span class="text-danger">*</span></label>
-                    <select class="form-select" id="status" name="status" required>
-                        <option value="" disabled selected>Select Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Relocated">Relocated</option>
-                    </select>
-                </div>
-                <div class="col-auto d-flex justify-content-end gap-2 form-group mb-0">
-                    <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='machine_list.php'">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Register</button>
-                </div>
+            <div class="d-flex justify-content-end gap-2 form-group mb-0">
+                <button type="button" class="btn btn-back" onclick="window.location.href='machine_list.php'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Register</button>
             </div>
-
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
