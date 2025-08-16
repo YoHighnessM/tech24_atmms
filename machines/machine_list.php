@@ -16,6 +16,8 @@ $select_machines = $conn->query("
         districts d ON m.district_id = d.id
     LEFT JOIN
         users u ON m.technician_id = u.id
+    WHERE
+        m.status <> 'Deleted'
 ");
 
 // Fetch the list of districts for the page heading
@@ -317,7 +319,7 @@ $result = $conn->query($districts);
                             echo "<td title='{$row['status']}'>" . htmlspecialchars($row['status']) . "</td>";
                             echo '<td class="table-actions">';
                             echo '<a href="more_info.php?id=' . $row['id'] . '">More Info</a>';
-                            echo '<a href="edit_machine.php?id=' . $row['id'] . '">Edit</a>';
+                            echo '<a href="machine_edit.php?id=' . $row['id'] . '">Edit</a>';
                             echo '</td>';
                             echo "</tr>";
                         }
