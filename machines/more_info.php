@@ -84,6 +84,12 @@ if (!$machine_data) {
             border-bottom: 1px solid #e0e0e0;
         }
 
+        /* New header links container for buttons */
+        .header-links {
+            display: flex;
+            gap: 1rem;
+        }
+
         .header-title h1 {
             font-size: 1.8rem;
             font-weight: 600;
@@ -104,9 +110,18 @@ if (!$machine_data) {
             transition: background-color 0.2s ease;
         }
 
+        .btn-primary {
+            background-color: #3498db;
+            color: #fff;
+        }
+
         .btn-secondary {
             background-color: #95a5a6;
             color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
         }
 
         .btn-secondary:hover {
@@ -195,6 +210,15 @@ if (!$machine_data) {
             .container {
                 padding: 1rem;
             }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-links {
+                margin-top: 1rem;
+            }
         }
     </style>
 </head>
@@ -205,7 +229,10 @@ if (!$machine_data) {
             <div class="header-title">
                 <h1>Machine Details</h1>
             </div>
-            <a href="machine_list.php" class="btn btn-secondary">Back to List</a>
+            <div class="header-links">
+                <a href="machine_edit.php?id=<?= htmlspecialchars($machine_data['id']) ?>" class="btn btn-primary">Edit Machine</a>
+                <a href="machine_list.php" class="btn btn-secondary">Back to List</a>
+            </div>
         </div>
         <div class="card-container">
             <!-- Basic Information Card - remains full width -->
