@@ -54,7 +54,6 @@ $result = $conn->query($districts);
 
         .container {
             width: 100%;
-            /* Removed max-width to allow the container to fill the page width */
             background-color: #fff;
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -85,34 +84,43 @@ $result = $conn->query($districts);
             margin: 0.5rem 0 0;
         }
 
-        .header-links a {
-            font-size: 0.9rem;
-            color: #34495e;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s ease;
-            margin-left: 0.5rem;
-        }
-
-        .header-links a:hover {
-            background-color: #ecf0f1;
-        }
-
-        /* Search and actions section */
-        .actions-section {
+        /* New header-actions container for buttons and search bar */
+        .header-actions {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
-            gap: 1rem;
+            justify-content: flex-end;
+            /* This will push all items to the right */
         }
 
+        .header-actions a,
+        .header-actions .btn {
+            font-size: 0.9rem;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+            border: none;
+        }
+
+        .header-actions .btn-primary {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .header-actions .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        /* Search bar styling */
         .search-bar {
             position: relative;
-            flex-grow: 1;
-            max-width: 400px;
+            /* Allow it to grow but not shrink beyond its content */
+            flex: 1 1 200px;
+            margin-right: auto;
+            /* Pushes the search bar to the left within the container */
         }
 
         .search-bar input {
@@ -138,26 +146,6 @@ $result = $conn->query($districts);
             color: #95a5a6;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .action-buttons .btn {
-            background-color: #3498db;
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.75rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-        }
-
-        .action-buttons .btn:hover {
-            background-color: #2980b9;
-        }
-
         /* Table styling to make it wide and without separate containers for each data cell */
         .table-container {
             overflow-x: auto;
@@ -166,7 +154,6 @@ $result = $conn->query($districts);
         .table-modern {
             width: 100%;
             border-collapse: collapse;
-            /* Use collapse for a classic table look */
         }
 
         .table-modern thead tr {
@@ -185,21 +172,17 @@ $result = $conn->query($districts);
 
         .table-modern td {
             background-color: #fff;
-            /* Revert to a single background for the whole table */
             padding: 1.25rem 1rem;
             font-weight: 500;
             color: #555;
             border-bottom: 1px solid #e0e0e0;
-            /* Add bottom border to separate rows */
             transition: all 0.2s ease;
             white-space: nowrap;
         }
 
         .table-modern tbody tr:hover td {
             background-color: #f9f9f9;
-            /* Hover effect on the entire row */
             box-shadow: none;
-            /* No box-shadow for hover */
         }
 
         .table-actions a {
@@ -217,24 +200,22 @@ $result = $conn->query($districts);
         /* Responsive design for smaller screens */
         @media (max-width: 768px) {
 
-            .header-links,
-            .actions-section {
+            .header-actions {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .header-links a {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions a {
                 margin: 0.25rem 0;
             }
 
             .search-bar {
                 max-width: none;
-            }
-
-            .action-buttons {
-                width: 100%;
-                justify-content: center;
-                margin-bottom: 1rem;
             }
         }
     </style>
@@ -261,21 +242,13 @@ $result = $conn->query($districts);
                     ?>
                 </h5>
             </div>
-            <div class="header-links">
-                <a href="banks.php">Banks</a>
-                <a href="districts.php">Districts</a>
-                <a href="technicians.php">Technicians</a>
-                <a href="counts.php">Counts</a>
-            </div>
-        </div>
-
-        <div class="actions-section">
-            <form onsubmit="event.preventDefault();" class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
-            </form>
-            <div class="action-buttons">
-                <a href="machine_reg.php" class="btn">
+            <div class="header-actions">
+                <form onsubmit="event.preventDefault();" class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
+                </form>
+                <a href="counts.php" class="btn btn-secondary" style="background-color: #95a5a6; color: #fff;">Counts</a>
+                <a href="machine_reg.php" class="btn btn-primary">
                     <i class="fas fa-plus-circle me-2"></i> Add Machine
                 </a>
             </div>
