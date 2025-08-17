@@ -1,6 +1,8 @@
-# Use an official PHP image with a web server
-# The "apache" tag includes an Apache web server, which is good for simple PHP apps
+# Use an official PHP image with Apache
 FROM php:8.2-apache
+
+# Install the mysqli PHP extension
+RUN docker-php-ext-install mysqli
 
 # Set the working directory inside the container
 WORKDIR /var/www/html
