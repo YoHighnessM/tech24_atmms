@@ -43,14 +43,11 @@ if (!$machine_data) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Machine Details</title>
-    <!-- Google Fonts for a modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <style>
-        /* General body and container styling, consistent with machine_list.php */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
@@ -60,21 +57,18 @@ if (!$machine_data) {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* Aligned to the top for better content display */
             min-height: 100vh;
         }
 
         .container {
             width: 100%;
             max-width: 1200px;
-            /* Increased max-width for a wider view */
             background-color: #fff;
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 2rem;
         }
 
-        /* Header section for the page title and back button */
         .header {
             display: flex;
             justify-content: space-between;
@@ -84,7 +78,6 @@ if (!$machine_data) {
             border-bottom: 1px solid #e0e0e0;
         }
 
-        /* New header links container for buttons */
         .header-links {
             display: flex;
             gap: 1rem;
@@ -97,7 +90,6 @@ if (!$machine_data) {
             color: #2c3e50;
         }
 
-        /* Button styling consistent with the other pages */
         .btn {
             padding: 0.75rem 1.5rem;
             font-size: 0.95rem;
@@ -128,14 +120,12 @@ if (!$machine_data) {
             background-color: #7f8c8d;
         }
 
-        /* Card styling for each section */
         .card-container {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
 
-        /* New class for side-by-side cards */
         .side-by-side-cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -194,11 +184,9 @@ if (!$machine_data) {
             font-size: 1rem;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 992px) {
             .side-by-side-cards {
                 grid-template-columns: 1fr;
-                /* Stack cards on smaller screens */
             }
         }
 
@@ -235,7 +223,6 @@ if (!$machine_data) {
             </div>
         </div>
         <div class="card-container">
-            <!-- Basic Information Card - remains full width -->
             <div class="card">
                 <div class="card-header">
                     <h2>Basic Information</h2>
@@ -258,9 +245,7 @@ if (!$machine_data) {
                 </div>
             </div>
 
-            <!-- Machine Details and Technician & Status cards placed side-by-side -->
             <div class="side-by-side-cards">
-                <!-- Machine Details Card -->
                 <div class="card">
                     <div class="card-header">
                         <h2>Machine Specifications</h2>
@@ -295,7 +280,6 @@ if (!$machine_data) {
                     </div>
                 </div>
 
-                <!-- Technician & Status Card -->
                 <div class="card">
                     <div class="card-header">
                         <h2>Technician & Status</h2>

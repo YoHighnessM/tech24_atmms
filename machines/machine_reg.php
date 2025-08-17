@@ -72,28 +72,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Machine Registration</title>
-    <!-- Google Fonts for a modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <style>
-        /* General body and container styling, consistent with machine_list.php */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
             color: #333;
             margin: 0;
             padding: 0;
-            /* Removed padding to allow for full vertical centering */
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Added to vertically center the container */
             min-height: 100vh;
             overflow: hidden;
-            /* Added to make the page not scrollable */
         }
 
         .container {
@@ -104,10 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 2rem;
             margin: 2rem 0;
-            /* Updated to use margin on both top and bottom */
         }
 
-        /* Header section, consistent with machine_list.php */
         .header {
             display: flex;
             justify-content: space-between;
@@ -124,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #2c3e50;
         }
 
-        /* Form styling */
         form {
             display: flex;
             flex-direction: column;
@@ -139,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .form-row.three-columns .form-group {
             flex-basis: calc(33.333% - 1rem);
-            /* 1/3 width minus gap */
             min-width: 180px;
         }
 
@@ -162,7 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #555;
         }
 
-        /* Input and select styling consistent with the search bar */
         input[type="text"],
         select {
             padding: 0.75rem 1rem;
@@ -172,7 +161,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.95rem;
             width: 100%;
             box-sizing: border-box;
-            /* Ensures padding doesn't affect width */
             transition: border-color 0.2s ease;
         }
 
@@ -189,7 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 0.5rem;
         }
 
-        /* Button styling consistent with machine_list.php */
         .actions {
             display: flex;
             gap: 1rem;
@@ -226,7 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #7f8c8d;
         }
 
-        /* Responsive design for smaller screens */
         @media (max-width: 768px) {
             .header-links {
                 flex-direction: column;
@@ -239,7 +225,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             form {
                 gap: 1rem;
-                /* Adjust gap for smaller screens */
             }
 
             .form-row,

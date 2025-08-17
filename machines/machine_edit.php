@@ -1,13 +1,10 @@
 <?php
-// Turn on error reporting for debugging purposes, as requested.
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include the database connection file
 include '../conn.php';
 
-// Check if a machine ID is provided in the URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: machine_list.php");
     exit();
@@ -15,8 +12,6 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $machine_id = $_GET['id'];
 
-// Fetch the existing machine data from the database
-// We join with other tables to get the names for dropdowns
 $query = "
     SELECT 
         m.*,
@@ -43,12 +38,10 @@ if (!$machine_data) {
     exit();
 }
 
-// Fetch all options for the dropdowns
 $banks = $conn->query("SELECT id, name FROM banks");
 $districts = $conn->query("SELECT id, name FROM districts");
 $technicians = $conn->query("SELECT id, fullname FROM users");
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $terminal_number = $_POST['terminal_number'] ?: '-';
     $bank_id = $_POST['bank'];
@@ -64,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $coordinates = $_POST['coordinates'] ?: '-';
     $status = $_POST['status'];
 
-    // Construct the UPDATE query using bare PHP
     $update_query = "
         UPDATE machines
         SET
@@ -86,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ";
 
     if ($conn->query($update_query)) {
-        // Redirect to the machine list page after a successful update
         header("Location: machine_list.php");
         exit();
     } else {
@@ -101,14 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Machine</title>
-    <!-- Google Fonts for a modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <style>
-        /* General body and container styling, consistent with machine_list.php */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
@@ -132,7 +120,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin: 2rem 0;
         }
 
-        /* Header section, consistent with machine_list.php */
         .header {
             display: flex;
             justify-content: space-between;
@@ -149,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #2c3e50;
         }
 
-        /* Form styling */
         form {
             display: flex;
             flex-direction: column;
@@ -211,7 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 0.5rem;
         }
 
-        /* Button styling consistent with machine_list.php */
         .actions {
             display: flex;
             gap: 1rem;
@@ -257,7 +242,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #c0392b;
         }
 
-        /* Responsive design for smaller screens */
         @media (max-width: 768px) {
             .header-links {
                 flex-direction: column;
@@ -294,7 +278,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <form method="POST">
-            <!-- Hidden input to pass the machine ID for the UPDATE query -->
             <input type="hidden" name="id" value="<?= htmlspecialchars($machine_id) ?>">
 
             <div class="form-group-full-width">
@@ -362,7 +345,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select id="district" name="district" required>
                         <option value="" disabled>Select District</option>
                         <?php
-                        // Reset the pointer for the districts result set
                         $districts->data_seek(0);
                         while ($d = $districts->fetch_assoc()): ?>
                             <option value="<?= $d['id'] ?>" <?= ($machine_data['district_id'] == $d['id']) ? 'selected' : '' ?>>
@@ -391,7 +373,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select id="technician" name="technician" required>
                         <option value="" disabled>Select Technician</option>
                         <?php
-                        // Reset the pointer for the technicians result set
                         $technicians->data_seek(0);
                         while ($t = $technicians->fetch_assoc()): ?>
                             <option value="<?= $t['id'] ?>" <?= ($machine_data['technician_id'] == $t['id']) ? 'selected' : '' ?>>
