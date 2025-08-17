@@ -1,7 +1,6 @@
 <?php
 include "../conn.php";
 
-// Fetch the machines and their related data from the database
 $select_machines = $conn->query("
     SELECT
         m.*,
@@ -20,7 +19,6 @@ $select_machines = $conn->query("
         m.status <> 'Deleted'
 ");
 
-// Fetch the list of districts for the page heading
 $districts = "SELECT * FROM districts";
 $result = $conn->query($districts);
 
@@ -33,14 +31,11 @@ $result = $conn->query($districts);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Machines List</title>
-    <!-- Google Fonts for a modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <style>
-        /* General body and container styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
@@ -60,11 +55,10 @@ $result = $conn->query($districts);
             padding: 2rem;
         }
 
-        /* Header section */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #e0e0e0;
@@ -84,18 +78,21 @@ $result = $conn->query($districts);
             margin: 0.5rem 0 0;
         }
 
-        /* New header-actions container for buttons and search bar */
-        .header-actions {
+        .header-right-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+            min-width: 300px;
+        }
+
+        .header-buttons {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            /* This will push all items to the right */
         }
 
-        .header-actions a,
-        .header-actions .btn {
+        .header-buttons a {
             font-size: 0.9rem;
             text-decoration: none;
             padding: 0.6rem 1.2rem;
@@ -103,24 +100,31 @@ $result = $conn->query($districts);
             transition: background-color 0.2s ease;
             font-weight: 500;
             border: none;
+            white-space: nowrap;
         }
 
-        .header-actions .btn-primary {
+        .header-buttons .btn-primary {
             background-color: #3498db;
             color: #fff;
         }
 
-        .header-actions .btn-primary:hover {
+        .header-buttons .btn-primary:hover {
             background-color: #2980b9;
         }
 
-        /* Search bar styling */
+        .header-buttons .btn-secondary {
+            background-color: #95a5a6;
+            color: #fff;
+        }
+
+        .header-buttons .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+
         .search-bar {
             position: relative;
-            /* Allow it to grow but not shrink beyond its content */
-            flex: 1 1 200px;
-            margin-right: auto;
-            /* Pushes the search bar to the left within the container */
+            width: 100%;
         }
 
         .search-bar input {
@@ -131,6 +135,7 @@ $result = $conn->query($districts);
             border: 1px solid #ddd;
             background-color: #f9f9f9;
             transition: border-color 0.2s ease;
+            box-sizing: border-box;
         }
 
         .search-bar input:focus {
@@ -146,7 +151,6 @@ $result = $conn->query($districts);
             color: #95a5a6;
         }
 
-        /* Table styling to make it wide and without separate containers for each data cell */
         .table-container {
             overflow-x: auto;
         }
@@ -182,7 +186,6 @@ $result = $conn->query($districts);
 
         .table-modern tbody tr:hover td {
             background-color: #f9f9f9;
-            box-shadow: none;
         }
 
         .table-actions a {
@@ -193,29 +196,38 @@ $result = $conn->query($districts);
             transition: color 0.2s ease;
         }
 
+        .table-actions a i {
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+
+        .table-actions a {
+            margin-right: 1.2rem;
+        }
+
         .table-actions a:hover {
             color: #2980b9;
         }
 
-        /* Responsive design for smaller screens */
         @media (max-width: 768px) {
-
-            .header-actions {
+            .header {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .header {
+            .header-right-content {
+                width: 100%;
+                margin-top: 1rem;
+                align-items: stretch;
+            }
+
+            .header-buttons {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
-            .header-actions a {
-                margin: 0.25rem 0;
-            }
-
-            .search-bar {
-                max-width: none;
+            .header-buttons a {
+                text-align: center;
             }
         }
     </style>
@@ -242,15 +254,30 @@ $result = $conn->query($districts);
                     ?>
                 </h5>
             </div>
-            <div class="header-actions">
+            <div class="header-right-content">
                 <form onsubmit="event.preventDefault();" class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
                 </form>
-                <a href="counts.php" class="btn btn-secondary" style="background-color: #95a5a6; color: #fff;">Counts</a>
-                <a href="machine_reg.php" class="btn btn-primary">
-                    <i class="fas fa-plus-circle me-2"></i> Add Machine
-                </a>
+                <div class="header-buttons">
+                    <a href="machine_reg.php" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add Machine
+                    </a>
+                    <a href="counts.php" class="btn btn-secondary">Counts</a>
+                    <div class="dropdown-menu-wrapper" style="position:relative;display:inline-block;">
+                        <button class="dropdown-toggle" style="background:none;border:none;cursor:pointer;padding:0 10px;">
+                            <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.5rem;"></i>
+                        </button>
+                        <div class="dropdown-menu" style="display:none;position:absolute;right:0;top:120%;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);min-width:160px;z-index:1000;">
+                            <a href="../logout.php" style="display:flex;align-items:center;gap:8px;padding:10px 16px;color:#333;text-decoration:none;border-bottom:1px solid #eee;">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </a>
+                            <a href="#" onclick="downloadExcel()" style="display:flex;align-items:center;gap:8px;padding:10px 16px;color:#333;text-decoration:none;">
+                                <i class="fa-solid fa-file-excel"></i> Download as Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -278,21 +305,21 @@ $result = $conn->query($districts);
                     if ($select_machines->num_rows > 0) {
                         while ($row = $select_machines->fetch_assoc()) {
                             echo "<tr>";
-                            echo "<td title='{$row['terminal_number']}'>" . htmlspecialchars($row['terminal_number']) . "</td>";
-                            echo "<td title='{$row['bank_name']}'>" . htmlspecialchars($row['bank_name']) . "</td>";
-                            echo "<td title='{$row['branch']}'>" . htmlspecialchars($row['branch']) . "</td>";
-                            echo "<td title='{$row['form_type']}'>" . htmlspecialchars($row['form_type']) . "</td>";
-                            echo "<td title='{$row['type']}'>" . htmlspecialchars($row['type']) . "</td>";
-                            echo "<td title='{$row['context']}'>" . htmlspecialchars($row['context']) . "</td>";
-                            echo "<td title='{$row['machine_name']}'>" . htmlspecialchars($row['machine_name']) . "</td>";
-                            echo "<td title='{$row['district_name']}'>" . htmlspecialchars($row['district_name']) . "</td>";
-                            echo "<td title='{$row['serial_number']}'>" . htmlspecialchars($row['serial_number']) . "</td>";
-                            echo "<td title='{$row['per_diem']}'>" . htmlspecialchars($row['per_diem']) . "</td>";
-                            echo "<td title='{$row['technician_name']}'>" . htmlspecialchars($row['technician_name']) . "</td>";
-                            echo "<td title='{$row['status']}'>" . htmlspecialchars($row['status']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['terminal_number']) . "'>" . htmlspecialchars($row['terminal_number']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['bank_name']) . "'>" . htmlspecialchars($row['bank_name']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['branch']) . "'>" . htmlspecialchars($row['branch']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['form_type']) . "'>" . htmlspecialchars($row['form_type']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['type']) . "'>" . htmlspecialchars($row['type']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['context']) . "'>" . htmlspecialchars($row['context']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['machine_name']) . "'>" . htmlspecialchars($row['machine_name']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['district_name']) . "'>" . htmlspecialchars($row['district_name']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['serial_number']) . "'>" . htmlspecialchars($row['serial_number']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['per_diem']) . "'>" . htmlspecialchars($row['per_diem']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['technician_name']) . "'>" . htmlspecialchars($row['technician_name']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['status']) . "'>" . htmlspecialchars($row['status']) . "</td>";
                             echo '<td class="table-actions">';
-                            echo '<a href="more_info.php?id=' . $row['id'] . '">More Info</a>';
-                            echo '<a href="machine_edit.php?id=' . $row['id'] . '">Edit</a>';
+                            echo '<a href="more_info.php?id=' . $row['id'] . '" title="More Info"><i class="fa-solid fa-circle-info"></i></a>';
+                            echo '<a href="machine_edit.php?id=' . $row['id'] . '" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>';
                             echo '</td>';
                             echo "</tr>";
                         }
@@ -304,28 +331,7 @@ $result = $conn->query($districts);
             </table>
         </div>
     </div>
-    <script>
-        function filterTable() {
-            const input = document.querySelector('input[name="search_query"]');
-            const filter = input.value.toLowerCase();
-            const table = document.querySelector('.table-modern');
-            const tr = table.querySelectorAll('tbody tr');
-
-            tr.forEach(row => {
-                let rowVisible = false;
-                row.querySelectorAll('td').forEach(cell => {
-                    if (cell.textContent.toLowerCase().includes(filter)) {
-                        rowVisible = true;
-                    }
-                });
-                if (rowVisible || filter === '') {
-                    row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
