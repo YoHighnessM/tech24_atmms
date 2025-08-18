@@ -56,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: machine_reg.php");
             exit();
         } else {
-            echo "Error: " . $conn->error;
+            $errorInfo = $conn->errorInfo();
+            echo "Error: " . $errorInfo[2];
         }
     } else {
         foreach ($errors as $error) {
@@ -258,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="bank">Bank: <span>*</span></label>
                     <select id="bank" name="bank" required>
                         <option value="" disabled selected>Select Bank</option>
-                        <?php while ($b = $banks->fetch_assoc()): ?>
+                        <?php while ($b = $banks->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $b['id'] ?>"><?= $b['name'] ?></option>
                         <?php endwhile; ?>
                     </select>
@@ -310,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="district">District: <span>*</span></label>
                     <select id="district" name="district" required>
                         <option value="" disabled selected>Select District</option>
-                        <?php while ($d = $districts->fetch_assoc()): ?>
+                        <?php while ($d = $districts->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $d['id'] ?>"><?= $d['name'] ?></option>
                         <?php endwhile; ?>
                     </select>
@@ -334,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="technician">Technician: <span>*</span></label>
                     <select id="technician" name="technician" required>
                         <option value="" disabled selected>Select Technician</option>
-                        <?php while ($t = $technicians->fetch_assoc()): ?>
+                        <?php while ($t = $technicians->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $t['id'] ?>"><?= $t['fullname'] ?></option>
                         <?php endwhile; ?>
                     </select>

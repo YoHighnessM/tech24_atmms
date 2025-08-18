@@ -20,6 +20,8 @@ $select_machines = $conn->query("
         users u ON m.technician_id = u.id
     WHERE
         m.status <> 'Deleted'
+    ORDER BY
+    m.branch ASC
 ");
 
 $districts = "SELECT * FROM districts";
@@ -247,12 +249,12 @@ $result = $conn->query($districts);
                     Machines List for
                     <?php
                     $district_names = [];
-                    if ($result->num_rows > 0) {
-                        while ($district = $result->fetch_assoc()) {
+                    if ($result->rowCount() > 0) {
+                        while ($district = $result->fetch(PDO::FETCH_ASSOC)) {
                             $district_names[] = $district['name'];
                         }
                         echo implode(', ', $district_names);
-                        $result->data_seek(0);
+                        $result->execute();
                     }
                     ?>
                 </h5>
@@ -305,8 +307,8 @@ $result = $conn->query($districts);
                 </thead>
                 <tbody>
                     <?php
-                    if ($select_machines->num_rows > 0) {
-                        while ($row = $select_machines->fetch_assoc()) {
+                    if ($select_machines->rowCount() > 0) {
+                        while ($row = $select_machines->fetch(PDO::FETCH_ASSOC)) {
                             echo "<tr>";
                             echo "<td title='" . htmlspecialchars($row['terminal_number']) . "'>" . htmlspecialchars($row['terminal_number']) . "</td>";
                             echo "<td title='" . htmlspecialchars($row['bank_name']) . "'>" . htmlspecialchars($row['bank_name']) . "</td>";

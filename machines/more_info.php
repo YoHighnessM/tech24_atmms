@@ -28,7 +28,7 @@ $query = "
 ";
 
 $result = $conn->query($query);
-$machine_data = $result->fetch_assoc();
+$machine_data = $result->fetch(PDO::FETCH_ASSOC);
 
 if (!$machine_data) {
     header("Location: machine_list.php");

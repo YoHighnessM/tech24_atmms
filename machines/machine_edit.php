@@ -31,7 +31,7 @@ $query = "
 ";
 
 $result = $conn->query($query);
-$machine_data = $result->fetch_assoc();
+$machine_data = $result->fetch(PDO::FETCH_ASSOC);
 
 if (!$machine_data) {
     echo "Machine not found.";
@@ -81,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: machine_list.php");
         exit();
     } else {
-        echo "Error: " . $conn->error;
+        $errorInfo = $conn->errorInfo();
+        echo "Error: " . $errorInfo[2];
     }
 }
 ?>
@@ -290,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="bank">Bank: <span>*</span></label>
                     <select id="bank" name="bank" required>
                         <option value="" disabled>Select Bank</option>
-                        <?php while ($b = $banks->fetch_assoc()): ?>
+                        <?php while ($b = $banks->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $b['id'] ?>" <?= ($machine_data['bank_id'] == $b['id']) ? 'selected' : '' ?>>
                                 <?= $b['name'] ?>
                             </option>
@@ -345,8 +346,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select id="district" name="district" required>
                         <option value="" disabled>Select District</option>
                         <?php
-                        $districts->data_seek(0);
-                        while ($d = $districts->fetch_assoc()): ?>
+                        $districts->execute();
+                        while ($d = $districts->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $d['id'] ?>" <?= ($machine_data['district_id'] == $d['id']) ? 'selected' : '' ?>>
                                 <?= $d['name'] ?>
                             </option>
@@ -373,8 +374,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select id="technician" name="technician" required>
                         <option value="" disabled>Select Technician</option>
                         <?php
-                        $technicians->data_seek(0);
-                        while ($t = $technicians->fetch_assoc()): ?>
+                        $technicians->execute();
+                        while ($t = $technicians->fetch(PDO::FETCH_ASSOC)): ?>
                             <option value="<?= $t['id'] ?>" <?= ($machine_data['technician_id'] == $t['id']) ? 'selected' : '' ?>>
                                 <?= $t['fullname'] ?>
                             </option>

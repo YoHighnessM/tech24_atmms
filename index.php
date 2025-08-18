@@ -1,4 +1,9 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 include 'conn.php';
 
@@ -10,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query = "SELECT * FROM users WHERE username='$username'";
     $result = $conn->query($query);
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+    if ($result->rowCount() > 0) {
+        $row = $result->fetch(PDO::FETCH_ASSOC);
         if (password_verify($password, $row['password'])) {
             $_SESSION['username'] = $row['username'];
             $_SESSION['user_id'] = $row['id'];

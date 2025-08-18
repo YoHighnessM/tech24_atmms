@@ -3,11 +3,11 @@ include "../conn.php";
 
 // Count total districts
 $districts_count_query = $conn->query("SELECT COUNT(*) AS total_districts FROM districts");
-$total_districts = $districts_count_query->fetch_assoc()['total_districts'];
+$total_districts = $districts_count_query->fetch(PDO::FETCH_ASSOC)['total_districts'];
 
 // Count total machines
 $machines_count_query = $conn->query("SELECT COUNT(*) AS total_machines FROM machines WHERE status <> 'Deleted'");
-$total_machines = $machines_count_query->fetch_assoc()['total_machines'];
+$total_machines = $machines_count_query->fetch(PDO::FETCH_ASSOC)['total_machines'];
 
 // Get all districts
 $all_districts_query = $conn->query("SELECT id, name FROM districts ORDER BY name");
@@ -15,7 +15,7 @@ $all_districts_query = $conn->query("SELECT id, name FROM districts ORDER BY nam
 // Get all banks
 $all_banks_query = $conn->query("SELECT id, name FROM banks ORDER BY name");
 $banks = [];
-while ($bank_row = $all_banks_query->fetch_assoc()) {
+while ($bank_row = $all_banks_query->fetch(PDO::FETCH_ASSOC)) {
     $banks[] = $bank_row;
 }
 
@@ -286,8 +286,8 @@ $machines_by_status_query = $conn->query("
             <h3>Machines by Status</h3>
             <div class="data-list">
                 <?php
-                if ($machines_by_status_query->num_rows > 0) {
-                    while ($row = $machines_by_status_query->fetch_assoc()) {
+                if ($machines_by_status_query->rowCount() > 0) {
+                    while ($row = $machines_by_status_query->fetch(PDO::FETCH_ASSOC)) {
                         echo '<div class="data-item">';
                         echo '<span class="data-item-label">' . htmlspecialchars($row['status']) . '</span>';
                         echo '<span class="data-item-count">' . htmlspecialchars($row['machines_count']) . '</span>';
@@ -304,22 +304,22 @@ $machines_by_status_query = $conn->query("
             <h3>Machines by District & Bank</h3>
             <div class="district-grid">
                 <?php
-                if ($all_districts_query->num_rows > 0) {
-                    while ($district = $all_districts_query->fetch_assoc()) {
+                if ($all_districts_query->rowCount() > 0) {
+                    while ($district = $all_districts_query->fetch(PDO::FETCH_ASSOC)) {
                         $district_id = $district['id'];
                         $district_name = htmlspecialchars($district['name']);
 
                         // Total active machines for the current district
                         $total_active_machines_district_query = $conn->query("SELECT COUNT(*) AS total FROM machines WHERE district_id = $district_id AND status = 'Active'");
-                        $total_active_machines_district = $total_active_machines_district_query->fetch_assoc()['total'];
+                        $total_active_machines_district = $total_active_machines_district_query->fetch(PDO::FETCH_ASSOC)['total'];
 
                         // Count inactive machines
                         $inactive_count_query = $conn->query("SELECT COUNT(*) AS count FROM machines WHERE district_id = $district_id AND status = 'Inactive'");
-                        $inactive_count = $inactive_count_query->fetch_assoc()['count'];
+                        $inactive_count = $inactive_count_query->fetch(PDO::FETCH_ASSOC)['count'];
 
                         // Count relocated machines
                         $relocated_count_query = $conn->query("SELECT COUNT(*) AS count FROM machines WHERE district_id = $district_id AND status = 'Relocated'");
-                        $relocated_count = $relocated_count_query->fetch_assoc()['count'];
+                        $relocated_count = $relocated_count_query->fetch(PDO::FETCH_ASSOC)['count'];
 
                         echo '<div class="district-card">';
                         echo '<h3>' . $district_name . ' <span>' . $total_active_machines_district . ' Machines</span></h3>';
@@ -330,7 +330,7 @@ $machines_by_status_query = $conn->query("
                             $bank_name = htmlspecialchars($bank['name']);
 
                             $machines_count_query = $conn->query("SELECT COUNT(*) AS machines_count FROM machines WHERE district_id = $district_id AND bank_id = $bank_id AND status <> 'Deleted'");
-                            $machines_count = $machines_count_query->fetch_assoc()['machines_count'];
+                            $machines_count = $machines_count_query->fetch(PDO::FETCH_ASSOC)['machines_count'];
 
                             echo '<li>';
                             echo '<span class="bank-name">' . $bank_name . '</span>';
