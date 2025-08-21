@@ -268,17 +268,22 @@ $result = $conn->query($districts);
                     <a href="machine_reg.php" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Add Machine
                     </a>
-                    <a href="counts.php" class="btn btn-secondary">Counts</a>
+                    <a href="counts.php" class="btn btn-secondary">Stats</a>
                     <div class="dropdown-menu-wrapper" style="position:relative;display:inline-block;">
                         <button class="dropdown-toggle" style="background:none;border:none;cursor:pointer;padding:0 10px;">
                             <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.5rem;"></i>
                         </button>
-                        <div class="dropdown-menu" style="display:none;position:absolute;right:0;top:120%;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);min-width:160px;z-index:1000;">
-                            <a href="../logout.php" style="display:flex;align-items:center;gap:8px;padding:10px 16px;color:#333;text-decoration:none;border-bottom:1px solid #eee;">
-                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        <div class="dropdown-menu" style="display:none;position:absolute;right:0;top:120%;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);min-width:200px;z-index:1000;">
+                            <a href="daily_report.php" style="display:flex;align-items:center;gap:8px;padding:10px 14px;color:#333;text-decoration:none;margin-top:4px;margin-bottom:4px;">
+                                <i class="fa-solid fa-calendar-day"></i> Daily Report
                             </a>
-                            <a href="#" onclick="downloadExcel()" style="display:flex;align-items:center;gap:8px;padding:10px 16px;color:#333;text-decoration:none;">
+                            <hr style="margin:0 0 4px 0;border:none;border-top:1px solid #eee;">
+                            <a href="#" onclick="downloadExcel()" style="display:flex;align-items:center;gap:8px;padding:10px 14px;color:#333;text-decoration:none;margin-top:4px;margin-bottom:4px;">
                                 <i class="fa-solid fa-file-excel"></i> Download as Excel
+                            </a>
+                            <hr style="margin:0 0 4px 0;border:none;border-top:1px solid #eee;">
+                            <a href="../logout.php" style="display:flex;align-items:center;gap:8px;padding:10px 14px;color:#e74c3c;text-decoration:none;background:#fbeee7;margin-top:4px;margin-bottom:4px;">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
                             </a>
                         </div>
                     </div>
