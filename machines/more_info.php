@@ -241,6 +241,10 @@ if (!$machine_data) {
                             <div class="detail-label">Branch</div>
                             <div class="detail-value"><?= htmlspecialchars($machine_data['branch']) ?></div>
                         </div>
+                        <div class="detail-item">
+                            <div class="detail-label">District</div>
+                            <div class="detail-value"><?= htmlspecialchars($machine_data['district_name']) ?></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -269,10 +273,6 @@ if (!$machine_data) {
                                 <div class="detail-value"><?= htmlspecialchars($machine_data['machine_name']) ?></div>
                             </div>
                             <div class="detail-item">
-                                <div class="detail-label">District</div>
-                                <div class="detail-value"><?= htmlspecialchars($machine_data['district_name']) ?></div>
-                            </div>
-                            <div class="detail-item">
                                 <div class="detail-label">Serial Number</div>
                                 <div class="detail-value"><?= htmlspecialchars($machine_data['serial_number']) ?></div>
                             </div>
@@ -282,21 +282,59 @@ if (!$machine_data) {
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Technician & Status</h2>
+                        <h2>Network Configuration</h2>
                     </div>
                     <div class="card-body">
                         <div class="details-grid">
                             <div class="detail-item">
-                                <div class="detail-label">Per Diem</div>
-                                <div class="detail-value"><?= htmlspecialchars($machine_data['per_diem']) ?></div>
+                                <div class="detail-label">IP Address</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['ip_address']) ?></div>
                             </div>
                             <div class="detail-item">
-                                <div class="detail-label">Technician</div>
-                                <div class="detail-value"><?= htmlspecialchars($machine_data['technician_name']) ?></div>
+                                <div class="detail-label">Subnet Mask</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['subnet_mask']) ?></div>
                             </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Gateway</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['default_gateway']) ?></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Port Number</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['port_number']) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-by-side-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Location & Contact</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="details-grid">
                             <div class="detail-item">
                                 <div class="detail-label">Coordinates</div>
                                 <div class="detail-value"><?= htmlspecialchars($machine_data['coordinates']) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Technician & Maintenance</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Technician Name</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['technician_name']) ?></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Per Diem</div>
+                                <div class="detail-value"><?= htmlspecialchars($machine_data['per_diem']) ?></div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Status</div>
