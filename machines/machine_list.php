@@ -274,7 +274,7 @@ $result = $conn->query($districts);
                             <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.5rem;"></i>
                         </button>
                         <div class="dropdown-menu" style="display:none;position:absolute;right:0;top:120%;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);min-width:200px;z-index:1000;">
-                            <a href="daily_report.php" style="display:flex;align-items:center;gap:8px;padding:10px 14px;color:#333;text-decoration:none;margin-top:4px;margin-bottom:4px;">
+                            <a href="../daily_report/report_list.php" style="display:flex;align-items:center;gap:8px;padding:10px 14px;color:#333;text-decoration:none;margin-top:4px;margin-bottom:4px;">
                                 <i class="fa-solid fa-calendar-day"></i> Daily Report
                             </a>
                             <hr style="margin:0 0 4px 0;border:none;border-top:1px solid #eee;">
@@ -315,18 +315,18 @@ $result = $conn->query($districts);
                     if ($select_machines->rowCount() > 0) {
                         while ($row = $select_machines->fetch(PDO::FETCH_ASSOC)) {
                             echo "<tr>";
-                            echo "<td title='" . htmlspecialchars($row['terminal_number']) . "'>" . htmlspecialchars($row['terminal_number']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['bank_name']) . "'>" . htmlspecialchars($row['bank_name']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['branch']) . "'>" . htmlspecialchars($row['branch']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['form_type']) . "'>" . htmlspecialchars($row['form_type']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['type']) . "'>" . htmlspecialchars($row['type']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['context']) . "'>" . htmlspecialchars($row['context']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['machine_name']) . "'>" . htmlspecialchars($row['machine_name']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['district_name']) . "'>" . htmlspecialchars($row['district_name']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['serial_number']) . "'>" . htmlspecialchars($row['serial_number']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['per_diem']) . "'>" . htmlspecialchars($row['per_diem']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['technician_name']) . "'>" . htmlspecialchars($row['technician_name']) . "</td>";
-                            echo "<td title='" . htmlspecialchars($row['status']) . "'>" . htmlspecialchars($row['status']) . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['terminal_number'] ?? '') . "'>" . htmlspecialchars($row['terminal_number'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['bank_name'] ?? '') . "'>" . htmlspecialchars($row['bank_name'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['branch'] ?? '') . "'>" . htmlspecialchars($row['branch'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['form_type'] ?? '') . "'>" . htmlspecialchars($row['form_type'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['type'] ?? '') . "'>" . htmlspecialchars($row['type'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['context'] ?? '') . "'>" . htmlspecialchars($row['context'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['machine_name'] ?? '') . "'>" . htmlspecialchars($row['machine_name'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['district_name'] ?? '') . "'>" . htmlspecialchars($row['district_name'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['serial_number'] ?? '') . "'>" . htmlspecialchars($row['serial_number'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['per_diem'] ?? '') . "'>" . htmlspecialchars($row['per_diem'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['technician_name'] ?? '') . "'>" . htmlspecialchars($row['technician_name'] ?? '') . "</td>";
+                            echo "<td title='" . htmlspecialchars($row['status'] ?? '') . "'>" . htmlspecialchars($row['status'] ?? '') . "</td>";
                             echo '<td class="table-actions">';
                             echo '<a href="more_info.php?id=' . $row['id'] . '" title="More Info"><i class="fa-solid fa-circle-info"></i></a>';
                             echo '<a href="machine_edit.php?id=' . $row['id'] . '" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>';
