@@ -4,7 +4,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include '../conn.php';
-
 session_start();
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -15,23 +14,29 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $machine_id = $_GET['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $terminal_number = $_POST['terminal_number'] ?? '-';
-    $bank_id = $_POST['bank_id'];
-    $branch = ucwords($_POST['branch']);
+    // Required
+    $bank_id     = $_POST['bank_id'];
     $district_id = $_POST['district_id'];
-    $form_type = $_POST['form_type'];
-    $type = $_POST['type'];
-    $context = ucwords($_POST['context']);
-    $machine_name = $_POST['machine_name'] ?? '-';
-    $serial_number = $_POST['serial_number'] ?? '-';
-    $ip_address = $_POST['ip_address'] ?? '-';
-    $subnet_mask = $_POST['subnet_mask'] ?? '-';
+
+    // Optional with defaults
+    $terminal_number = $_POST['terminal_number'] ?? '-';
+    $branch          = !empty($_POST['branch']) ? ucwords($_POST['branch']) : '-';
+    $form_type       = $_POST['form_type'] ?? '-';
+    $type            = $_POST['type'] ?? '-';
+    $context         = !empty($_POST['context']) ? ucwords($_POST['context']) : '-';
+    $machine_name    = $_POST['machine_name'] ?? '-';
+    $serial_number   = $_POST['serial_number'] ?? '-';
+    $ip_address      = $_POST['ip_address'] ?? '-';
+    $subnet_mask     = $_POST['subnet_mask'] ?? '-';
     $default_gateway = $_POST['default_gateway'] ?? '-';
-    $port_number = $_POST['port_number'] ?? '-';
-    $coordinates = $_POST['coordinates'] ?? '-';
-    $technician_id = $_POST['technician_id'];
-    $per_diem = $_POST['per_diem'];
-    $status = $_POST['status'];
+    $port_number     = $_POST['port_number'] ?? '-';
+    $coordinates     = $_POST['coordinates'] ?? '-';
+    $per_diem        = $_POST['per_diem'] ?? '-';
+    $status          = $_POST['status'] ?? 'Active';
+
+    // Technician can be NULL
+    $technician_id = $_POST['technician_id'] ?? null;
+    $technician_value = (is_null($technician_id) || $technician_id === '') ? "NULL" : "'$technician_id'";
 
     $update_query = "
         UPDATE machines
@@ -50,20 +55,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             default_gateway = '$default_gateway',
             port_number = '$port_number',
             coordinates = '$coordinates',
-            technician_id = '$technician_id',
+            technician_id = $technician_value,
             per_diem = '$per_diem',
             status = '$status',
             updated_at = CURRENT_TIMESTAMP
-        WHERE
-            id = '$machine_id'
+        WHERE id = '$machine_id'
     ";
 
     if ($conn->query($update_query)) {
-        header("Location: more_info.php?id=" . $machine_id);
+        echo "<script>
+                alert('Machine updated successfully!');
+                window.location.href = 'more_info.php?id=$machine_id';
+              </script>";
         exit();
     } else {
         $errorInfo = $conn->errorInfo();
-        echo "Error: " . $errorInfo[2];
+        echo "<script>
+                alert('Error updating machine: " . addslashes($errorInfo[2]) . "');
+                window.history.back();
+              </script>";
+        exit();
     }
 }
 
@@ -79,8 +90,8 @@ if (!$machine_data) {
 $banks = $conn->query("SELECT id, name FROM banks ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 $districts = $conn->query("SELECT id, name FROM districts ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 $technicians = $conn->query("SELECT id, fullname FROM users WHERE role = 'technician' ORDER BY fullname")->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -363,7 +374,7 @@ $technicians = $conn->query("SELECT id, fullname FROM users WHERE role = 'techni
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="technician_id">Technician Name</label>
-                                    <select id="technician_id" name="technician_id" required>
+                                    <select id="technician_id" name="technician_id">
                                         <option value="" disabled selected>Choose Technician</option>
                                         <?php foreach ($technicians as $technician) : ?>
                                             <option value="<?= $technician['id'] ?>" <?= ($machine_data['technician_id'] == $technician['id']) ? 'selected' : '' ?>><?= htmlspecialchars($technician['fullname']) ?></option>

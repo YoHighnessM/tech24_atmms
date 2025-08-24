@@ -10,23 +10,26 @@ $districts = $conn->query("SELECT id, name FROM districts ORDER BY name")->fetch
 $technicians = $conn->query("SELECT id, fullname FROM users WHERE role = 'technician' ORDER BY fullname")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $terminal_number = !empty($_POST['terminal_number']) ? $_POST['terminal_number'] : '-';
+    // Required fields
     $bank_id = $_POST['bank_id'];
-    $branch = ucwords($_POST['branch']);
+    $branch = !empty($_POST['branch']) ? "'" . ucwords($_POST['branch']) . "'" : "DEFAULT";
     $district_id = $_POST['district_id'];
-    $form_type = $_POST['form_type'];
-    $type = $_POST['type'];
-    $context = !empty($_POST['context']) ? ucwords($_POST['context']) : '-';
-    $machine_name = !empty($_POST['machine_name']) ? $_POST['machine_name'] : '-';
-    $serial_number = !empty($_POST['serial_number']) ? $_POST['serial_number'] : '-';
-    $ip_address = !empty($_POST['ip_address']) ? $_POST['ip_address'] : '-';
-    $subnet_mask = !empty($_POST['subnet_mask']) ? $_POST['subnet_mask'] : '-';
-    $default_gateway = !empty($_POST['default_gateway']) ? $_POST['default_gateway'] : '-';
-    $port_number = !empty($_POST['port_number']) ? $_POST['port_number'] : '-';
-    $coordinates = !empty($_POST['coordinates']) ? $_POST['coordinates'] : '-';
-    $technician_id = !empty($_POST['technician_id']) ? $_POST['technician_id'] : '-';
-    $per_diem = $_POST['per_diem'];
-    $status = $_POST['status'];
+    $form_type = !empty($_POST['form_type']) ? "'" . $_POST['form_type'] . "'" : "DEFAULT";
+    $type = !empty($_POST['type']) ? "'" . $_POST['type'] . "'" : "DEFAULT";
+    $per_diem = !empty($_POST['per_diem']) ? "'" . $_POST['per_diem'] . "'" : "DEFAULT";
+    $status = !empty($_POST['status']) ? "'" . $_POST['status'] . "'" : "DEFAULT";
+
+    // Optional fields
+    $terminal_number = !empty($_POST['terminal_number']) ? "'" . $_POST['terminal_number'] . "'" : "DEFAULT";
+    $context = !empty($_POST['context']) ? "'" . ucwords($_POST['context']) . "'" : "DEFAULT";
+    $machine_name = !empty($_POST['machine_name']) ? "'" . $_POST['machine_name'] . "'" : "DEFAULT";
+    $serial_number = !empty($_POST['serial_number']) ? "'" . $_POST['serial_number'] . "'" : "DEFAULT";
+    $ip_address = !empty($_POST['ip_address']) ? "'" . $_POST['ip_address'] . "'" : "DEFAULT";
+    $subnet_mask = !empty($_POST['subnet_mask']) ? "'" . $_POST['subnet_mask'] . "'" : "DEFAULT";
+    $default_gateway = !empty($_POST['default_gateway']) ? "'" . $_POST['default_gateway'] . "'" : "DEFAULT";
+    $port_number = !empty($_POST['port_number']) ? "'" . $_POST['port_number'] . "'" : "DEFAULT";
+    $coordinates = !empty($_POST['coordinates']) ? "'" . $_POST['coordinates'] . "'" : "DEFAULT";
+    $technician_id = !empty($_POST['technician_id']) ? $_POST['technician_id'] : "DEFAULT";
 
     $insert_query = "
         INSERT INTO machines (
@@ -34,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             machine_name, serial_number, ip_address, subnet_mask, default_gateway,
             port_number, coordinates, technician_id, per_diem, status, created_at, updated_at
         ) VALUES (
-            '$terminal_number', '$bank_id', '$branch', '$district_id', '$form_type', '$type', '$context',
-            '$machine_name', '$serial_number', '$ip_address', '$subnet_mask', '$default_gateway',
-            '$port_number', '$coordinates', '$technician_id', '$per_diem', '$status', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+            $terminal_number, '$bank_id', $branch, '$district_id', $form_type, $type, $context,
+            $machine_name, $serial_number, $ip_address, $subnet_mask, $default_gateway,
+            $port_number, $coordinates, $technician_id, $per_diem, $status, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         )
     ";
 
@@ -49,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
