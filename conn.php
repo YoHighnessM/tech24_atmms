@@ -18,34 +18,63 @@
 // die("Connection failed: " . $conn->connect_error);
 // }
 
+
+// #####################################################
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+// $conn = new PDO(
+//     "pgsql:host=$host;port=$port;dbname=$dbname",
+//     $user,
+//     $password,
+//     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+// );
+
+
+// #####################################################
+
 //neon
 
 $envFile = __DIR__ . '/.env';
 $env = [];
 
+// Load .env if it exists (local dev)
 if (file_exists($envFile)) {
-    // Parse local .env only if valid
     $parsed = parse_ini_file($envFile);
     if ($parsed !== false) {
         $env = $parsed;
     }
 }
 
-// Fallback to getenv if .env file doesn’t exist or fails
-$host = $env['DB_HOST']     ?? getenv('DB_HOST');
-$dbname = $env['DB_NAME']   ?? getenv('DB_NAME');
-$user = $env['DB_USERNAME'] ?? getenv('DB_USERNAME');
-$password = $env['DB_PASSWORD'] ?? getenv('DB_PASSWORD');
-$port = $env['DB_PORT']     ?? getenv('DB_PORT');
-$sslmode = $env['DB_SSLMODE'] ?? getenv('DB_SSLMODE') ?: 'require';
+$databaseUrl = getenv('DATABASE_URL');
+
+if ($databaseUrl) {
+    // Parse DATABASE_URL (Render/Neon)
+    $dbopts = parse_url($databaseUrl);
+
+    $host     = $dbopts['host'];
+    $port     = $dbopts['port'] ?? 5432;
+    $dbname   = ltrim($dbopts['path'], '/');
+    $user     = $dbopts['user'];
+    $password = $dbopts['pass'];
+    $sslmode  = 'require';
+} else {
+    // Fallback to .env or individual env vars
+    $host     = getenv('DB_HOST')     ?: ($env['DB_HOST']     ?? 'localhost');
+    $port     = getenv('DB_PORT')     ?: ($env['DB_PORT']     ?? '5432');
+    $dbname   = getenv('DB_NAME')     ?: ($env['DB_NAME']     ?? '');
+    $user     = getenv('DB_USERNAME') ?: ($env['DB_USERNAME'] ?? '');
+    $password = getenv('DB_PASSWORD') ?: ($env['DB_PASSWORD'] ?? '');
+    $sslmode  = getenv('DB_SSLMODE')  ?: ($env['DB_SSLMODE']  ?? 'prefer');
+}
+
+$dsn = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=$sslmode";
 
 try {
-    $conn = new PDO(
-        "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=$sslmode",
-        $user,
-        $password,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
+    $conn = new PDO($dsn, $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
     // echo "Connected successfully!";
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
