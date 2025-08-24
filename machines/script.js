@@ -45,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!searchInput) return;
 
   document.addEventListener("keydown", function (e) {
-    if (e.key.toLowerCase() === "s") {
+    // Use Alt+S as shortcut
+    if (e.altKey && e.key.toLowerCase() === "s") {
       e.preventDefault();
       searchInput.focus();
     } else if (e.key === "Escape") {
