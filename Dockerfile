@@ -1,7 +1,11 @@
 # Use an official PHP image with Apache
 FROM php:8.2-apache
 
-# Install the mysqli PHP extension
+# Install PostgreSQL PDO extension
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo_pgsql
+
+# Optional: also install mysqli if you need MySQL support
 RUN docker-php-ext-install mysqli
 
 # Set the working directory inside the container
