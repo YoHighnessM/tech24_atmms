@@ -262,7 +262,7 @@ $result = $conn->query($districts);
             <div class="header-right-content">
                 <form onsubmit="event.preventDefault();" class="search-bar">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
+                    <input id="search_query" type="text" placeholder="Search machines..." name="search_query" onkeyup="filterTable()" />
                 </form>
                 <div class="header-buttons">
                     <a href="machine_reg.php" class="btn btn-primary">
