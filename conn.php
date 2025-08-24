@@ -20,14 +20,25 @@
 
 //neon
 
-$env = parse_ini_file(__DIR__ . '/.env');
+$env = __DIR__ . '/.env';
 
-$host = $env['DB_HOST'];
-$dbname = $env['DB_NAME'];
-$user = $env['DB_USERNAME'];
-$password = $env['DB_PASSWORD'];
-$port = $env['DB_PORT'];
-$sslmode = $env['DB_SSLMODE'];
+if (file_exists($env)) {
+    $env = parse_ini_file($env);
+
+    $host = $env['DB_HOST'];
+    $dbname = $env['DB_NAME'];
+    $user = $env['DB_USERNAME'];
+    $password = $env['DB_PASSWORD'];
+    $port = $env['DB_PORT'];
+    $sslmode = $env['DB_SSLMODE'];
+} else {
+    $host = $env['DB_HOST'];
+    $dbname = $env['DB_NAME'];
+    $user = $env['DB_USERNAME'];
+    $password = $env['DB_PASSWORD'];
+    $port = $env['DB_PORT'];
+    $sslmode = $env['DB_SSLMODE'];
+}
 
 try {
     $conn = new PDO(
