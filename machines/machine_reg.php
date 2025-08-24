@@ -5,64 +5,47 @@ error_reporting(E_ALL);
 
 include '../conn.php';
 
-$banks = $conn->query("SELECT id, name FROM banks");
-$districts = $conn->query("SELECT id, name FROM districts");
-$technicians = $conn->query("SELECT id, fullname FROM users");
+$banks = $conn->query("SELECT id, name FROM banks ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+$districts = $conn->query("SELECT id, name FROM districts ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+$technicians = $conn->query("SELECT id, fullname FROM users WHERE role = 'technician' ORDER BY fullname")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $required = [
-        'bank',
-        'branch',
-        'form_type',
-        'type',
-        'district',
-        'per_diem',
-        'technician',
-        'status'
-    ];
-    $errors = [];
-    foreach ($required as $field) {
-        if (empty($_POST[$field]) || $_POST[$field] === '-') {
-            $errors[] = ucfirst(str_replace('_', ' ', $field)) . " is required.";
-        }
-    }
+    $terminal_number = !empty($_POST['terminal_number']) ? $_POST['terminal_number'] : '-';
+    $bank_id = $_POST['bank_id'];
+    $branch = ucwords($_POST['branch']);
+    $district_id = $_POST['district_id'];
+    $form_type = $_POST['form_type'];
+    $type = $_POST['type'];
+    $context = !empty($_POST['context']) ? ucwords($_POST['context']) : '-';
+    $machine_name = !empty($_POST['machine_name']) ? $_POST['machine_name'] : '-';
+    $serial_number = !empty($_POST['serial_number']) ? $_POST['serial_number'] : '-';
+    $ip_address = !empty($_POST['ip_address']) ? $_POST['ip_address'] : '-';
+    $subnet_mask = !empty($_POST['subnet_mask']) ? $_POST['subnet_mask'] : '-';
+    $default_gateway = !empty($_POST['default_gateway']) ? $_POST['default_gateway'] : '-';
+    $port_number = !empty($_POST['port_number']) ? $_POST['port_number'] : '-';
+    $coordinates = !empty($_POST['coordinates']) ? $_POST['coordinates'] : '-';
+    $technician_id = !empty($_POST['technician_id']) ? $_POST['technician_id'] : '-';
+    $per_diem = $_POST['per_diem'];
+    $status = $_POST['status'];
 
-    if (count($errors) === 0) {
-        $terminal_number = $_POST['terminal_number'] ?: '-';
-        $bank_id = $_POST['bank'];
-        $branch = ucwords($_POST['branch']);
-        $form_type = $_POST['form_type'];
-        $type = $_POST['type'];
-        $context = ucwords($_POST['context']);
-        $atm_name = $_POST['atm_name'] ?: '-';
-        $district_id = $_POST['district'];
-        $serial_number = $_POST['serial_number'] ?: '-';
-        $per_diem = $_POST['per_diem'];
-        $technician_id = $_POST['technician'] ?: '-';
-        $coordinates = $_POST['coordinates'] ?: '-';
-        $status = $_POST['status'];
-
-        $query = "INSERT INTO machines (
-            terminal_number, bank_id, branch, form_type, type, context,
-            machine_name, district_id, serial_number, per_diem, technician_id,
-            coordinates, status
+    $insert_query = "
+        INSERT INTO machines (
+            terminal_number, bank_id, branch, district_id, form_type, type, context,
+            machine_name, serial_number, ip_address, subnet_mask, default_gateway,
+            port_number, coordinates, technician_id, per_diem, status, created_at, updated_at
         ) VALUES (
-            '$terminal_number', '$bank_id', '$branch', '$form_type', '$type', '$context',
-            '$atm_name', '$district_id', '$serial_number', '$per_diem', '$technician_id',
-            '$coordinates', '$status'
-        )";
+            '$terminal_number', '$bank_id', '$branch', '$district_id', '$form_type', '$type', '$context',
+            '$machine_name', '$serial_number', '$ip_address', '$subnet_mask', '$default_gateway',
+            '$port_number', '$coordinates', '$technician_id', '$per_diem', '$status', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    ";
 
-        if ($conn->query($query)) {
-            header("Location: machine_reg.php");
-            exit();
-        } else {
-            $errorInfo = $conn->errorInfo();
-            echo "Error: " . $errorInfo[2];
-        }
+    if ($conn->query($insert_query)) {
+        echo "<script>alert('Machine registered successfully!'); window.location.href = 'machine_list.php';</script>";
+        exit();
     } else {
-        foreach ($errors as $error) {
-            echo "<div style='color:red;'>$error</div>";
-        }
+        $errorInfo = $conn->errorInfo();
+        echo "Error: " . $errorInfo[2];
     }
 }
 ?>
@@ -72,18 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Machine Registration</title>
+    <title>Register Machine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
             color: #333;
             margin: 0;
-            padding: 0;
+            padding: 2rem;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -92,12 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             background-color: #fff;
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 2rem;
-            margin: 2rem 0;
         }
 
         .header {
@@ -114,73 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 600;
             margin: 0;
             color: #2c3e50;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .form-row.three-columns .form-group {
-            flex-basis: calc(33.333% - 1rem);
-            min-width: 180px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .form-group-full-width {
-            width: 100%;
-        }
-
-        label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            display: block;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        input[type="text"],
-        select {
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 0.75rem;
-            background-color: #f9f9f9;
-            font-size: 0.95rem;
-            width: 100%;
-            box-sizing: border-box;
-            transition: border-color 0.2s ease;
-        }
-
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .radio-group {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
         }
 
         .btn {
@@ -205,35 +119,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #fff;
         }
 
-        .btn-primary:hover {
-            background-color: #2980b9;
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
+        .side-by-side-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
-        @media (max-width: 768px) {
-            .header-links {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        .card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
 
-            .header-links a {
-                margin: 0.25rem 0;
-            }
+        .card-header {
+            background-color: #f9f9f9;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            form {
-                gap: 1rem;
-            }
+        .card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: #34495e;
+        }
 
-            .form-row,
-            .form-row.three-columns {
-                flex-direction: column;
-            }
+        .default-value-info {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
 
-            .form-group {
-                min-width: 100%;
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: red;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        @media (max-width: 992px) {
+            .side-by-side-cards {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -245,121 +220,178 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="header-title">
                 <h1>Register New Machine</h1>
             </div>
+            <a href="machine_list.php" class="btn btn-secondary">Cancel</a>
         </div>
 
         <form method="POST">
-            <div class="form-group-full-width">
-                <label for="terminal_number">Terminal Number:</label>
-                <input type="text" id="terminal_number" name="terminal_number" value="-">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="bank">Bank: <span>*</span></label>
-                    <select id="bank" name="bank" required>
-                        <option value="" disabled selected>Select Bank</option>
-                        <?php while ($b = $banks->fetch(PDO::FETCH_ASSOC)): ?>
-                            <option value="<?= $b['id'] ?>"><?= $b['name'] ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="branch">Branch: <span>*</span></label>
-                    <input type="text" id="branch" name="branch" required>
-                </div>
-            </div>
-
-            <div class="form-row three-columns">
-                <div class="form-group">
-                    <label for="form_type">Form Type: <span>*</span></label>
-                    <select id="form_type" name="form_type" required>
-                        <option value="" disabled selected>Select Form Type</option>
-                        <option value="TTW">TTW</option>
-                        <option value="Lobby">Lobby</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="type">Type: <span>*</span></label>
-                    <select id="type" name="type" required>
-                        <option value="" disabled selected>Select Machine Type</option>
-                        <option value="ATM">ATM</option>
-                        <option value="Depositor">Depositor</option>
-                        <option value="Recycler">Recycler</option>
-                        <option value="STM">STM</option>
-                        <option value="VTM">VTM</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="context">Context:</label>
-                    <input type="text" id="context" name="context" value="Branch">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="atm_name">ATM Name:</label>
-                    <select id="atm_name" name="atm_name">
-                        <option value="" disabled selected>Select ATM Name</option>
-                        <option value="ATM - 1">ATM - 1</option>
-                        <option value="ATM - 2">ATM - 2</option>
-                        <option value="ATM - 3">ATM - 3</option>
-                        <option value="ATM - 4">ATM - 4</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="district">District: <span>*</span></label>
-                    <select id="district" name="district" required>
-                        <option value="" disabled selected>Select District</option>
-                        <?php while ($d = $districts->fetch(PDO::FETCH_ASSOC)): ?>
-                            <option value="<?= $d['id'] ?>"><?= $d['name'] ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group-full-width">
-                <label for="serial_number">Serial Number:</label>
-                <input type="text" id="serial_number" name="serial_number" value="-">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Per Diem: <span>*</span></label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="per_diem" value="Yes" required> Yes</label>
-                        <label><input type="radio" name="per_diem" value="No" required> No</label>
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Information</h2>
+                        <span class="default-value-info">fields left blank will default to "-"</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="terminal_number">Terminal Number</label>
+                                <input type="text" id="terminal_number" name="terminal_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_id">Bank<span class="required">*</span></label>
+                                <select id="bank_id" name="bank_id" required>
+                                    <option value="" disabled selected>Select Bank</option>
+                                    <?php foreach ($banks as $bank) : ?>
+                                        <option value="<?= $bank['id'] ?>"><?= htmlspecialchars($bank['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="branch">Branch<span class="required">*</span></label>
+                                <input type="text" id="branch" name="branch" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="district_id">District<span class="required">*</span></label>
+                                <select id="district_id" name="district_id" required>
+                                    <option value="" disabled selected>Select District</option>
+                                    <?php foreach ($districts as $district) : ?>
+                                        <option value="<?= $district['id'] ?>"><?= htmlspecialchars($district['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="technician">Technician: <span>*</span></label>
-                    <select id="technician" name="technician" required>
-                        <option value="" disabled selected>Select Technician</option>
-                        <?php while ($t = $technicians->fetch(PDO::FETCH_ASSOC)): ?>
-                            <option value="<?= $t['id'] ?>"><?= $t['fullname'] ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-            </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="coordinates">Coordinates:</label>
-                    <input type="text" id="coordinates" name="coordinates" value="-">
+                <div class="side-by-side-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Machine Specifications</h2>
+                            <span class="default-value-info">fields left blank will default to "-"</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="form_type">Form Type<span class="required">*</span></label>
+                                    <select id="form_type" name="form_type" required>
+                                        <option value="" disabled selected>Select Form Type</option>
+                                        <option value="Lobby">Lobby</option>
+                                        <option value="TTW">TTW</option>
+                                        <option value="-">-</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type">Type<span class="required">*</span></label>
+                                    <select id="type" name="type" required>
+                                        <option value="" disabled selected>Select Machine Type</option>
+                                        <option value="ATM">ATM</option>
+                                        <option value="Depositor">Depositor</option>
+                                        <option value="Recycler">Recycler</option>
+                                        <option value="STM">STM</option>
+                                        <option value="VTM">VTM</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="context">Context</label>
+                                    <input type="text" id="context" name="context">
+                                </div>
+                                <div class="form-group">
+                                    <label for="machine_name">ATM Name</label>
+                                    <input type="text" id="machine_name" name="machine_name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serial_number">Serial Number</label>
+                                    <input type="text" id="serial_number" name="serial_number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Network Configuration</h2>
+                            <span class="default-value-info">fields left blank will default to "-"</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ip_address">IP Address</label>
+                                    <input type="text" id="ip_address" name="ip_address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="subnet_mask">Subnet Mask</label>
+                                    <input type="text" id="subnet_mask" name="subnet_mask">
+                                </div>
+                                <div class="form-group">
+                                    <label for="default_gateway">Gateway</label>
+                                    <input type="text" id="default_gateway" name="default_gateway">
+                                </div>
+                                <div class="form-group">
+                                    <label for="port_number">Port Number</label>
+                                    <input type="text" id="port_number" name="port_number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="status">Status: <span>*</span></label>
-                    <select id="status" name="status" required>
-                        <option value="" disabled selected>Select Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Relocated">Relocated</option>
-                    </select>
+
+                <div class="side-by-side-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Location & Contact</h2>
+                            <span class="default-value-info">fields left blank will default to "-"</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="coordinates">Coordinates</label>
+                                    <input type="text" id="coordinates" name="coordinates">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Technician & Maintenance</h2>
+                            <span class="default-value-info">fields left blank will default to "-"</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="technician_id">Technician Name</label>
+                                    <select id="technician_id" name="technician_id">
+                                        <option value="" disabled selected>Choose Technician</option>
+                                        <?php foreach ($technicians as $technician) : ?>
+                                            <option value="<?= $technician['id'] ?>"><?= htmlspecialchars($technician['fullname']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="per_diem">Per Diem<span class="required">*</span></label>
+                                    <select id="per_diem" name="per_diem" required>
+                                        <option value="" disabled selected>Select</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                        <option value="-">-</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Status<span class="required">*</span></label>
+                                    <select id="status" name="status" required>
+                                        <option value="" disabled selected>Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Relocated">Relocated</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="actions">
-                <a href="machine_list.php" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Register Machine</button>
             </div>
         </form>
     </div>
