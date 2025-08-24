@@ -255,6 +255,10 @@ $machines_by_status_query = $conn->query("
                 flex-direction: column;
                 text-align: center;
             }
+
+            .district-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
